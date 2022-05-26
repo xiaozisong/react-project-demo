@@ -1,12 +1,10 @@
-import { BrowserRouter as Router, NavLink, Route, Switch, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
 import Login from '@/pages/Login';
 import Layout from '@/pages/Layout';
 import NotFound from '@/pages/NotFound';
 function App() {
   return (
     <Router>
-      <NavLink to="/">主页架子</NavLink> &nbsp;
-      <NavLink to="/login">登录</NavLink> &nbsp;
       <Switch>
         <Redirect exact from='/' to='/home'></Redirect>
         <Route path="/home" component={Layout}></Route>
@@ -14,7 +12,6 @@ function App() {
         <Route component={NotFound}></Route>
       </Switch>
     </Router>
-    
   );
 }
 

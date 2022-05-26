@@ -1,10 +1,28 @@
 import React from 'react'
-import { Card, Form, Input, Checkbox, Button } from 'antd'
+import { Card, Form, Input, Checkbox, Button, message } from 'antd'
 import logo from '@/assets/logo.png'
 import './index.scss'
+import { useDispatch } from 'react-redux'
+import { login } from '@/store/actions/Login'
+import { useHistory } from 'react-router-dom'
+import { useState } from 'react'
 export default function Login() {
-  const onFinish = (value) => {
-    console.log(value);
+  const dispacth = useDispatch()
+  const history = useHistory()
+  const [loading, setLoading] = useState(false)
+  const onFinish = async (value) => {
+    try {
+      // 开启loading，防止发送多次请求
+      setLoading(true)
+      // 登录成功
+      await dispacth(login(value))
+      message.success('登录成功')
+      history.push('/home')
+    } catch (error) {
+      // 登录失败
+      message.success(error.response.data.message)
+      setLoading(false)
+    }
   }
   return (
     <div className="login">
@@ -18,6 +36,11 @@ export default function Login() {
             span:3,
             offset: 16
           }}
+          initialValues={{
+            mobile: '13911111111',
+            code: '246810',
+            agree: true
+           }}
           validateTrigger={['onChange', 'onBlur']}
           onFinish={onFinish}
         >
@@ -52,7 +75,7 @@ export default function Login() {
             <Input.Password />
           </Form.Item>
           <Form.Item
-            name="remember"
+            name="agree"
             valuePropName="checked"
             rules={[
               {
@@ -69,7 +92,7 @@ export default function Login() {
           </Form.Item>
           <Form.Item
           >
-            <Button type="primary" htmlType="submit" block>
+            <Button type="primary" htmlType="submit" block loading={loading}>
               登录
             </Button>
           </Form.Item>

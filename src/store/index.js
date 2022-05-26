@@ -1,8 +1,11 @@
-// import { createStore, applyMiddleware } from 'redux'
+import { getToken } from '@/storage/login'
 import { configureStore, applyMiddleware } from '@reduxjs/toolkit'
 import thunk from 'redux-thunk'
-// import rootReducers from './reducers'
-import login from './reducers/login'
+import rootReducers from './reducers'
 export default configureStore({
-  reducer: login
-},applyMiddleware(thunk))
+  reducer: rootReducers
+},
+{
+  token: getToken()
+},
+applyMiddleware(thunk))
