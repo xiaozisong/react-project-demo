@@ -9,6 +9,9 @@
     .ant-layout-header {
       padding: 0;
     }
+    .popConfirm .ant-popover-buttons{
+      display: flex;
+    }
     .header {
       .logo {
         float: left;
