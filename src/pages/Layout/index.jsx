@@ -19,9 +19,7 @@ import { logout } from '@/store/actions/Login'
 const { Header, Content, Sider } = Layout
 export default function MyLayout() {
   const location = useLocation()
-
   const userInfo = useSelector(state => state.user)
-  console.log(userInfo);
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(getUserInfo())
@@ -53,7 +51,7 @@ export default function MyLayout() {
             </span>
           </div>
         </Header>
-        <Layout>
+        <Layout >
           <Sider width={200} className="site-layout-background">
             <Menu
               mode="inline"
@@ -72,18 +70,15 @@ export default function MyLayout() {
               </Menu.Item>
             </Menu>
           </Sider>
-          <Layout style={{ padding: '0 24px 24px' }}>
-            <Breadcrumb style={{ margin: '16px 0' }}>
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
-              <Breadcrumb.Item>List</Breadcrumb.Item>
-              <Breadcrumb.Item>App</Breadcrumb.Item>
-            </Breadcrumb>
+          <Layout style={{ padding: '24px', display: 'block', overflow: 'auto' }}>
+            
             <Content
               className="site-layout-background"
               style={{
                 padding: 24,
                 margin: 0,
-                minHeight: 280
+                minHeight: 280,
+                display: 'block'
               }}
             >
               <Switch>

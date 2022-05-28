@@ -4,11 +4,13 @@ import logo from '@/assets/logo.png'
 import './index.scss'
 import { useDispatch } from 'react-redux'
 import { login } from '@/store/actions/Login'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 export default function Login() {
   const dispacth = useDispatch()
   const history = useHistory()
+  const location = useLocation()
+  console.log(location, 'login');
   const [loading, setLoading] = useState(false)
   const onFinish = async (value) => {
     try {
@@ -17,7 +19,8 @@ export default function Login() {
       // 登录成功
       await dispacth(login(value))
       message.success('登录成功')
-      history.push('/home')
+      const path = location?.state?.from || '/home'
+      history.replace(path)
     } catch (error) {
       // 登录失败
       message.success(error.response.data.message)

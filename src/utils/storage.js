@@ -10,15 +10,3 @@ export const getToken = () => {
 export const removeToken = () => {
   localStorage.removeItem(LOGIN_TOKEN)
 }
-const USER_INFO = 'react-user-info'
-export const setUserInfo = (userInfo) => {
-  localStorage.setItem(USER_INFO, JSON.stringify(userInfo))
-}
-
-export const getUserInfo = () => {
-  return JSON.parse(localStorage.getItem(USER_INFO))
-}
-
-export const removeUserInfo = () => {
-  localStorage.removeItem(USER_INFO)
-}

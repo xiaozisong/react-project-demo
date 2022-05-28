@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 import { LOGIN_GETTOKEN, LOGOUT } from '@/constants/index'
-import { removeToken, removeUserInfo, setToken } from '@/utils/storage'
+import { removeToken, setToken } from '@/utils/storage'
 import { history } from '@/App'
 export const login = fromObj => {
   return async dispatch => {
@@ -13,8 +13,6 @@ export const login = fromObj => {
 export const logout = () => {
   // 清除本地token
   removeToken()
-  // 清除本地用户信息
-  removeUserInfo()
   // 跳转页面
   history.push('/login')
   return {

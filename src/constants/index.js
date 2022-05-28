@@ -1,3 +1,5 @@
 export const LOGIN_GETTOKEN = 'login/getToken'
 export const USER_INFO = 'user/getInfo'
 export const LOGOUT = 'logout/clearInfo'
+export const CHANNEL_LIST = 'article/channelList'
+export const Article_LIST = 'article/articlelList'

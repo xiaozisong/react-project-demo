@@ -2,6 +2,7 @@
 import { history } from '@/App'
 import store from '@/store'
 import { logout } from '@/store/actions/Login'
+import { message } from 'antd'
 import axios from 'axios'
 import { getToken } from './storage'
 
@@ -37,7 +38,11 @@ instance.interceptors.response.use(
     if(error.response.status === 401) {
       // 身份验证失败，跳到登录页
       store.dispatch(logout())
-      history.push('/login')
+      message.error('身份验证过期，请重新登录')
+      history.replace({
+        pathname: '/login',
+        state: history.location.pathname
+      })
     }
     return Promise.reject(error)
   }
