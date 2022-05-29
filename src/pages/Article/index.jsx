@@ -5,22 +5,24 @@ import {
   Form, 
   Button, 
   Radio, 
-  Select, 
   DatePicker, 
   Table,
   Image,
   Tag,
   Card,
-  Space 
+  Space, 
+  message,
 } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { getArticleList, getChannelsList } from '@/store/actions/article'
+import { delArticle, getArticleList, getChannelsList } from '@/store/actions/article'
 import img from '@/assets/error.png'
 import { useRef } from 'react'
 import dayjs from 'dayjs'
+import { history } from '@/App'
+import MyChannels from '@/components/MyChannels'
 const status = [
   { id: -1, title: '全部', color: 'magenta' },
   { id: 0, title: '草稿', color: 'red' },
@@ -28,86 +30,91 @@ const status = [
   { id: 2, title: '审核通过', color: 'lime' },
   { id: 3, title: '审核失败', color: 'gold' }
 ]
-const columns = [
-  {
-    title: '封面',
-    dataIndex: 'cover',
-    key: 'cover',
-    render: (value) => {
-      if (value.type === 0) {
-        return <Image
-        width={200}
-        src={img}
-      />
-      } else {
-        return <Image
-        width={200}
-        src={value.images[0]}
-      />
+
+
+export default function Article() {
+  const columns = [
+    {
+      title: '封面',
+      dataIndex: 'cover',
+      key: 'cover',
+      render: (value) => {
+        if (value.type === 0) {
+          return <Image
+          width={200}
+          src={img}
+        />
+        } else {
+          return <Image
+          width={200}
+          src={value.images[0]}
+        />
+        }
+      },
+    },
+    {
+      title: '标题',
+      dataIndex: 'title',
+      key: 'title'
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      render: value => {
+        const statusObj = status.find(item => item.id === value)
+        if(statusObj) {
+          return <Tag color={statusObj.color} key={statusObj.id}>{statusObj.title}</Tag>
+        }
       }
     },
-  },
-  {
-    title: '标题',
-    dataIndex: 'title',
-    key: 'title'
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-    key: 'status',
-    render: value => {
-      const statusObj = status.find(item => item.id === value)
-      if(statusObj) {
-        return <Tag color={statusObj.color} key={statusObj.id}>{statusObj.title}</Tag>
+    {
+      title: '发布时间',
+      dataIndex: 'pubdate',
+      key: 'pubdate'
+    },
+    {
+      title: '阅读数',
+      dataIndex: 'read_count',
+      key: 'read_count'
+    },
+    {
+      title: '评论数',
+      dataIndex: 'comment_count',
+      key: 'comment_count'
+    },
+    {
+      title: '点赞数',
+      dataIndex: 'like_count',
+      key: 'like_count'
+    },
+    {
+      title: '操作',
+      dataIndex: 'id',
+      render: (value) => {
+        return (
+          <Space>
+            <Button onClick={() => {
+              history.push(`/home/publish/${value}`)
+            }} type='primary' shape='circle' icon={<EditOutlined />}></Button>
+            <Button onClick={() => handleDel(value)} type='danger' shape='circle' icon={<DeleteOutlined />}></Button>
+          </Space>
+        )
       }
     }
-  },
-  {
-    title: '发布时间',
-    dataIndex: 'pubdate',
-    key: 'pubdate'
-  },
-  {
-    title: '阅读数',
-    dataIndex: 'read_count',
-    key: 'read_count'
-  },
-  {
-    title: '评论数',
-    dataIndex: 'comment_count',
-    key: 'comment_count'
-  },
-  {
-    title: '点赞数',
-    dataIndex: 'like_count',
-    key: 'like_count'
-  },
-  {
-    title: '操作',
-    dataIndex: 'address',
-    render: (value) => {
-      return (
-        <Space>
-          <Button type='primary' shape='circle' icon={<EditOutlined />}></Button>
-          <Button type='danger' shape='circle' icon={<DeleteOutlined />}></Button>
-        </Space>
-      )
-    }
-  }
-]
-export default function Article() {
-  const { Option } = Select
+  ]
   const { RangePicker } = DatePicker
   const dispatch = useDispatch()
-
   useEffect(() => {
     dispatch(getChannelsList())
     dispatch(getArticleList())
   }, [dispatch])
-
-  const channelList = useSelector(state => state.article.channels)
-  const articleList = useSelector(state => state.article.articles)
+  const handleDel = async (id) => {
+    await dispatch(delArticle(id))
+    await dispatch(getArticleList())
+    message.success('删除成功！')
+  }
+  const articleList = useSelector(state => state.article)
   const query = useRef({})
   const handleFinish = (values) => {
     if(values.status !== -1) {
@@ -148,9 +155,7 @@ export default function Article() {
           </Form.Item>
 
           <Form.Item label="频道" name='channel_id'>
-            <Select placeholder="请选择频道" style={{ width: 200 }}>
-              {channelList?.map(item => <Option value={item.id} key={item.id}>{ item.name }</Option>)}
-            </Select>
+            <MyChannels></MyChannels>
           </Form.Item>
 
           <Form.Item label="日期" name='date'>
@@ -164,11 +169,11 @@ export default function Article() {
           </Form.Item>
         </Form>
       </Card>
-      <Card title={`根据筛选条件共查询到${articleList?.total_count}条结果:`} style={{ marginTop: 10 }}>
-        <Table rowKey="id" dataSource={articleList?.results} columns={columns} pagination={{
-          current: articleList?.page,
-          pageSize: articleList?.per_page,
-          total: articleList?.total_count,
+      <Card title={`根据筛选条件共查询到${articleList.total_count}条结果:`} style={{ marginTop: 10 }}>
+        <Table rowKey="id" dataSource={articleList.results} columns={columns} pagination={{
+          current: articleList.page,
+          pageSize: articleList.per_page,
+          total: articleList.total_count,
           onChange: handleChange
         }}/>
       </Card>

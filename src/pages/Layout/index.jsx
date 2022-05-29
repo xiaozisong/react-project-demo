@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Switch, Link } from 'react-router-dom'
 import styles from './index.module.scss'
-import { Layout, Menu, Breadcrumb, Popconfirm } from 'antd'
+import { Layout, Menu, Popconfirm } from 'antd'
 import {
   LogoutOutlined,
   HomeOutlined,
@@ -18,7 +18,10 @@ import { getUserInfo } from '@/store/actions/user'
 import { logout } from '@/store/actions/Login'
 const { Header, Content, Sider } = Layout
 export default function MyLayout() {
-  const location = useLocation()
+  let { pathname } = useLocation()
+  if(pathname.startsWith('/home/publish')) {
+    pathname = '/home/publish'
+  }
   const userInfo = useSelector(state => state.user)
   const dispatch = useDispatch()
   useEffect(() => {
@@ -57,7 +60,7 @@ export default function MyLayout() {
               mode="inline"
               theme="dark"
               style={{ height: '100%', borderRight: 0 }}
-              selectedKeys={location.pathname}
+              selectedKeys={pathname}
             >
               <Menu.Item icon={<HomeOutlined />} key="/home">
                 <Link to={'/home'}>数据概览</Link>
@@ -65,7 +68,7 @@ export default function MyLayout() {
               <Menu.Item icon={<HddOutlined />} key="/home/article">
                 <Link to={'/home/article'}>内容管理</Link>
               </Menu.Item>
-              <Menu.Item icon={<EditOutlined />} key="/home/publish">
+              <Menu.Item icon={<EditOutlined />} key={'/home/publish'}>
                 <Link to={'/home/publish'}>发布文章</Link>
               </Menu.Item>
             </Menu>
@@ -84,7 +87,8 @@ export default function MyLayout() {
               <Switch>
                 <Route exact path='/home' component={Home}></Route>
                 <Route path='/home/article' component={Article}></Route>
-                <Route path='/home/publish' component={Publish}></Route>
+                <Route exact path='/home/publish' component={Publish} key={pathname}></Route>
+                <Route exact path='/home/publish/:id' component={Publish}></Route>
               </Switch>
             </Content>
           </Layout>

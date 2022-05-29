@@ -7,7 +7,7 @@ import axios from 'axios'
 import { getToken } from './storage'
 
 const instance = axios.create({
-  baseURL: 'http://geek.itheima.net/v1_0/',
+  baseURL: process.env.REACT_APP_URL,
   timeout: 5000
 })
 
